@@ -1,0 +1,7 @@
+gst/.idea/
+.vscode/
+*.iml
+**/target/
+/target/*
+/.idea/*
+/.idea/sonarlint/**
