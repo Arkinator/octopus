@@ -1,0 +1,44 @@
+ports:
+  identity: ${free.port.1}
+  client: ${free.port.2}
+  proxyMgmt: 9090 #${free.port.3}
+  proxyPort: ${free.port.4}
+
+tigerProxy:
+  activateRbelEndpoint: true
+  skipTrafficEndpointsSubscription: true
+  trafficEndpoints:
+    - http://localhost:${tiger.ports.proxyMgmt}
+
+servers:
+  octopusIdentityServer:
+    type: externalJar
+    source:
+      - local:../octopus-identity-service/target/octopus-identity-service-1.0-SNAPSHOT.jar
+    externalJarOptions:
+      arguments:
+        - --server.port = ${tiger.ports.identity}
+      healthcheck: http://localhost:${tiger.ports.identity}/status
+
+  octopusClient:
+    type: externalJar
+    source:
+      - local:../octopus-example-client/target/octopus-example-client-1.0-SNAPSHOT.jar
+    externalJarOptions:
+      options:
+        - -Dhttp.proxyHost=127.0.0.1
+        - -Dhttp.proxyPort=${tiger.ports.proxyPort}
+      arguments:
+        - --server.port=${tiger.ports.client}
+        - --services.identity=http://octopusIdentityServer
+      healthcheck: http://localhost:${tiger.ports.client}/testdriver/status
+
+  remoteTigerProxy:
+    type: tigerProxy
+    tigerProxyCfg:
+      serverPort: ${tiger.ports.proxyMgmt}
+      proxyCfg:
+        port: ${tiger.ports.proxyPort}
+        proxyRoutes:
+          - from: http://octopusIdentityServer
+            to: http://localhost:${tiger.ports.identity}
