@@ -55,6 +55,9 @@
                 <executions>
                     <execution>
                         <configuration>
+                            <glues>
+                                <glue>de.gematik.test.tiger.integration.example</glue>
+                            </glues>
                             <!-- Optional Example Configuration which shows all optional properties with its default configuration -->
                             <!--       <skip>false</skip>-->
                             <!--       <featuresDir>${basedir}</featuresDir>-->

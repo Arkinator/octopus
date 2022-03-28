@@ -1,4 +1,4 @@
-package de.gematik.tuz.dojo.octopus.identity;
+package de.gematik.octopussi.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

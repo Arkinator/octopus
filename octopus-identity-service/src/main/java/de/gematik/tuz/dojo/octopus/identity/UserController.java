@@ -1,5 +1,7 @@
 package de.gematik.tuz.dojo.octopus.identity;
 
+import de.gematik.octopussi.user.UserInformation;
+import kong.unirest.Unirest;
 import lombok.RequiredArgsConstructor;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
@@ -7,6 +9,7 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserController {
 
+    @Value("${services.shopping}")
+    private String shoppingServiceUrl;
     private static RsaJsonWebKey RSA_KEY;
 
     static {
@@ -35,7 +40,15 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
         }
 
-        return userRepository.addUser(userInformation);
+        final UserInformation newUser = userRepository.addUser(userInformation);
+
+        Unirest.put(shoppingServiceUrl + "/inventory/generate")
+            .body(newUser.toBuilder()
+                .passwordHash(null)
+                .build())
+            .asString();
+
+        return newUser;
     }
 
     @PostMapping("login")

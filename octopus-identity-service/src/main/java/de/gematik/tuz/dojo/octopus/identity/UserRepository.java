@@ -1,5 +1,6 @@
 package de.gematik.tuz.dojo.octopus.identity;
 
+import de.gematik.octopussi.user.UserInformation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -16,7 +17,8 @@ public class UserRepository {
     return Optional.ofNullable(userMap.get(username));
   }
 
-  public UserInformation addUser(UserInformation userInformation) {
+  public UserInformation addUser(
+      UserInformation userInformation) {
     final UserInformation newUser =
         userInformation.toBuilder().id(counter.getAndIncrement()).build();
 

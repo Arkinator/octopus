@@ -11,8 +11,9 @@ import net.serenitybdd.rest.SerenityRest;
 @Slf4j
 public class TestTigerIntegrationExample {
 
-  @When("I register new User with name {string} and password {string}")
+  @When("I register new user with name {string} and password {string}")
   public void userRequestsStartpage(final String username, final String password) {
+    SerenityRest.proxy("localhost", 9191);
     SerenityRest.get(
             "http://octopusClient/testdriver/performRegistration?"
                 + "username="
@@ -24,6 +25,7 @@ public class TestTigerIntegrationExample {
 
   @When("I login as user {string} with password {string}")
   public void iLoginAsUserWithPassword(String username, String password) {
+    SerenityRest.proxy("localhost", 9191);
     SerenityRest.get(
             "http://octopusClient/testdriver/performLogin?"
                 + "username="
