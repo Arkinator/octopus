@@ -2,10 +2,8 @@ package de.gematik.tuz.dojo.octopus.client;
 
 import com.google.common.hash.Hashing;
 import de.gematik.tuz.dojo.octopus.client.dto.NewUserDto;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
@@ -24,6 +22,9 @@ public class TestDriverController {
 
     @Value("${services.identity}")
     private String identityServiceUrl;
+    @Value("${services.shopping}")
+    private String shoppingServiceUrl;
+    private AtomicReference<String> userToken = new AtomicReference<>();
 
     @GetMapping("performRegistration")
     public NewUserDto performRegistration(
@@ -50,8 +51,17 @@ public class TestDriverController {
     public String performLogin(
         @RequestParam("username") String username, @RequestParam("password") String password) {
         return Unirest.post(identityServiceUrl + "/login")
-            .queryString("passwordHash",Hashing.sha256().hashString(password).toString())
+            .queryString("passwordHash", Hashing.sha256().hashString(password).toString())
             .queryString("username", username)
+            .asString()
+            .ifSuccess(response -> userToken.set(response.getBody()))
+            .getBody();
+    }
+
+    @GetMapping("retrieveInventory")
+    public String retrieveInventory() {
+        return Unirest.get(shoppingServiceUrl + "/inventory")
+            .header("Authorization", "Bearer " + userToken.get())
             .asString()
             .getBody();
     }
