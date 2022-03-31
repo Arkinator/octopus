@@ -100,7 +100,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>gematik/${project.name}</repository>
+                    <repository>octopus/${project.name}</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>

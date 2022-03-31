@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java:11
+FROM openjdk:11
 
 ENV SHOPPING_SERVICE_URL=""
 ENV IDENTITY_SERVICE_URL=""
