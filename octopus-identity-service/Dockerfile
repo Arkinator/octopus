@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java:11
+FROM openjdk:11
 
 ENV SHOPPING_SERVICE_URL=""
 ENTRYPOINT java -jar /usr/share/octopus/identity-service.jar --services.shopping "$SHOPPING_SERVICE_URL"
