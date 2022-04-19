@@ -4,11 +4,13 @@
 
 package de.gematik.test.tiger.integration.example;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import de.gematik.rbellogger.modifier.RbelModificationDescription;
 import de.gematik.test.tiger.common.config.TigerGlobalConfiguration;
 import de.gematik.test.tiger.common.data.config.tigerProxy.TigerProxyConfiguration;
 import de.gematik.test.tiger.proxy.client.TigerRemoteProxyClient;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -17,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.serenitybdd.rest.SerenityRest;
+import org.springframework.web.util.UriUtils;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 @Slf4j
@@ -30,7 +33,7 @@ public class TestTigerIntegrationExample {
     public void loadTestData() {
         log.info("Loading testdata...");
         TigerGlobalConfiguration.readFromYaml(
-            FileUtils.readFileToString(new File("testData.yaml"), StandardCharsets.UTF_8),
+            FileUtils.readFileToString(new File("testData.yaml"), UTF_8),
             "octopus"
         );
         log.info("Done loading testdata!");
@@ -48,9 +51,9 @@ public class TestTigerIntegrationExample {
         SerenityRest.get(
                 "http://octopusClient/testdriver/performRegistration?"
                     + "username="
-                    + TigerGlobalConfiguration.resolvePlaceholders(username)
+                    + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(username), UTF_8)
                     + "&password="
-                    + TigerGlobalConfiguration.resolvePlaceholders(password))
+                    + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(password), UTF_8))
             .asString();
     }
 
@@ -60,9 +63,9 @@ public class TestTigerIntegrationExample {
         SerenityRest.get(
                 "http://octopusClient/testdriver/performLogin?"
                     + "username="
-                    + TigerGlobalConfiguration.resolvePlaceholders(username)
+                    + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(username), UTF_8)
                     + "&password="
-                    + TigerGlobalConfiguration.resolvePlaceholders(password))
+                    + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(password), UTF_8))
             .asString();
     }
 
@@ -83,5 +86,15 @@ public class TestTigerIntegrationExample {
                 .replaceWith("Bearer wrong token :D")
                 .build()
         );
+    }
+
+    @And("I trade {string} to user {string} for {double}")
+    public void iTradeToUserFor(String octopusName, String otherUserName, double money) {
+        SerenityRest.proxy("localhost", 9191);
+        SerenityRest.get("http://octopusClient/testdriver/trade?"
+                    + "octopusName=" + TigerGlobalConfiguration.resolvePlaceholders(octopusName)
+                    + "&otherUserName=" + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(otherUserName), UTF_8)
+                    + "&money=" + money)
+            .asString();
     }
 }

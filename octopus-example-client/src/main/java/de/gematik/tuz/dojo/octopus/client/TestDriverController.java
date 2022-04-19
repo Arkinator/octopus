@@ -2,6 +2,7 @@ package de.gematik.tuz.dojo.octopus.client;
 
 import com.google.common.hash.Hashing;
 import de.gematik.tuz.dojo.octopus.client.dto.NewUserDto;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import kong.unirest.JsonNode;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriUtils;
 
 @RestController
 @RequestMapping("testdriver")
@@ -56,6 +58,26 @@ public class TestDriverController {
             .asString()
             .ifSuccess(response -> userToken.set(response.getBody()))
             .getBody();
+    }
+
+    @GetMapping("trade")
+    public String performTrade(
+        @RequestParam("octopusName") String octopusName,
+        @RequestParam("otherUserName") String otherUserName,
+        @RequestParam("money") double money) {
+        Long otherUserId = Long.parseLong(Unirest.get(identityServiceUrl + "/findUserIdToName")
+            .queryString("username", otherUserName)
+            .asString()
+            .getBody());
+
+        Unirest.post(shoppingServiceUrl + "/inventory/trade")
+            .header("Authorization", "Bearer " + userToken.get())
+            .queryString("octopusName", octopusName)
+            .queryString("otherUserId", otherUserId)
+            .queryString("moneyToGive", money)
+            .asEmpty();
+
+        return "{\"o\":\"k\"}";
     }
 
     @GetMapping("retrieveInventory")

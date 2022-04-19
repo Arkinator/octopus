@@ -49,7 +49,7 @@ public class UserController {
 
         final UserInformation newUser = userRepository.addUser(userInformation);
 
-        Unirest.put(shoppingServiceUrl + "/inventory/generate?id="+newUser.getId()).asString();
+        Unirest.post(shoppingServiceUrl + "/inventory/generate?id="+newUser.getId()).asString();
 
         return newUser;
     }
@@ -90,6 +90,13 @@ public class UserController {
             log.warn("Error while verifying user identity: ", e);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User could not be verified!");
         }
+    }
+
+    @GetMapping("findUserIdToName")
+    public Long findUserIdToName(@RequestParam("username") String username) {
+        return userRepository.findUserByName(username)
+            .map(UserInformation::getId)
+            .orElse(-1L);
     }
 
     @GetMapping("status")

@@ -2,9 +2,11 @@ package de.gematik.octopussi.octopus;
 
 import static java.text.MessageFormat.format;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.val;
 
+@Data
 public class Octopus {
 
   @Getter private final String name;
