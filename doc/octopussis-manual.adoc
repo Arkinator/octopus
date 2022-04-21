@@ -1,0 +1,97 @@
+= Octopussis
+:sectnums:
+:toc:
+:toc-title: Inhalt
+:toclevels: 4
+
+== Voraussetzungen
+Das folgende Tooling wird benötigt
+
+- IDE (idealerweise IntelliJ) (optional)
+- IntelliJ link:https://plugins.jetbrains.com/plugin/9164-gherkin[Gherkin Plugin] (optional)
+- Java 11 und Maven
+- Docker
+- Git
+
+== Installation
+
+=== Projekt klonen
+Projekt aus dem GitLab klonen
+
+[source,console]
+----
+git clone https://build.top.local/source/tuz-quality-dojos/octopussis.git
+----
+
+[NOTE]
+====
+Das Projekt liegt aktuell in der GitLab-Gruppe `tuz-quality-dojos` und ist damit für die meisten nicht sichtbar. Solltest du Probleme haben, dieses Projekt zu klonen liegt das vermutlich an der fehlenden Berechtigung. In diesem Fall bitte kurz bescheid geben!
+====
+
+=== Bauen
+Das Projekt kann mit dem folgenden Kommando gebaut werden. Dieser Schritt ist nur notwendig, wenn im nächsten Schritt Octopussis <<_manuell_starten, manuell>> gestartet werden soll.
+
+[source,console]
+----
+mvn clean package
+----
+
+=== Octopussis starten
+
+Um die Anwendung zu starten gibt es verschiedene Möglichkeiten. Die gesamte Anwendung liegt als `docker-compose.yaml` vor und kann entweder manuell oder
+automatisiert über Maven hochgefahren werden.
+
+==== Manuell starten
+Um die Anwendung manuell über die `docker-compose.yaml` zu starten, muss das folgende Kommando aus dem Hauptverzeichnis des Projektes ausgeführt werden:
+
+[source,console]
+----
+docker-compose up
+----
+
+==== Über Maven starten
+CAUTION: Scheint aktuell nicht zu funktionieren. Allerdings vernachlässigbar, weil für diesen Fall die <<_ausführung_über_maven>> genutzt werden kann/sollte.
+
+[NOTE]
+====
+Unter Umständen muss die `~/.m2/settings.xml` um folgenden Eintrag erweitert werden
+[source,xml]
+----
+<settings>
+    <pluginGroups>
+        <pluginGroup>com.spotify</pluginGroup>
+    </pluginGroups>
+</settings>
+----
+====
+
+=== BDD Tests ausführen
+Zum Ausführen der Tests gibt es verschiedene Möglichkeiten, die nachfolgend beschrieben werden.
+
+==== Ausführung über IntelliJ
+Die IDE IntelliJ bietet direkt die Möglichkeit Testszenarien in Gherkin direkt aus dem Feature-File heraus zu starten. Die Ausführung der Tests ist dabei wie gewohnt über den "__grünen Pfeil__" möglich. Diese Möglichkeit wird ausführlich in der link:https://www.jetbrains.com/help/idea/performing-tests.html[Dokumentation von IntelliJ beschrieben].
+
+[NOTE]
+====
+Da wir für die Ausführung anstatt von Cucumber das Framework *Serenity BDD* einsetzen (wollen) muss in den *Run/Debug Configurations* unter `Main class` die folgende Klasse konfiguriert werden: `net.serenitybdd.cucumber.cli.Main`
+====
+
+Diese Methode hat die folgenden Vor- und Nachteile:
+- Es können nur einzelne Szenarien oder Features ausgeführt werden
+- Nach einem Testdurchlauf wird *kein* vollständiger Serenity-Report erzeugt
+
+==== Ausführung über Maven
+Die gesamte Testsuite kann auch manuell über Maven ausgeführt werden:
+
+[source,console]
+----
+mvn verify
+----
+
+Wurde das Testobjekt <<_manuell_starten, manuell>> gestartet, dann ist ausreichend das folgende Kommando aus dem eigentlichen Modul mit den BDD-Tests (z.B. `octopus-integration-test`) auszuführen. In diesem Fall wird das Testobjekt nicht explizit hochgefahren.
+
+Alternativ dazu kann man das nachfolgende Kommando auch aus dem Hauptverzeichnis ausführen. In diesem Fall wird das Testobjekt automatisch im Docker hochgefahren und anschließend die Tests ausgeführt.
+
+Diese Methode hat die folgenden Vor- und Nachteile:
+- Es können nur begrenzt Szenarien und Features für die Ausführung ausgewählt werden
+- Nach einem Testdurchlauf wird *ein* vollständiger Serenity-Report erzeugt
