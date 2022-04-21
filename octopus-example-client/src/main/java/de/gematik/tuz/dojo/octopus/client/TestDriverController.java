@@ -23,9 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class TestDriverController {
 
-    @Value("${services.identity}")
+    @Value("${services.identity:}")
     private String identityServiceUrl;
-    @Value("${services.shopping}")
+    @Value("${services.shopping:}")
     private String shoppingServiceUrl;
     private AtomicReference<String> userToken = new AtomicReference<>();
 

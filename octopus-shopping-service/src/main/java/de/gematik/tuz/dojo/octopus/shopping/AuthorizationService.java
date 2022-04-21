@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class AuthorizationService {
 
-    @Value("${services.identity}")
+    @Value("${services.identity:}")
     private String identityServiceUrl;
 
     public long verifyAuthorizedAndReturnUserId(String authorizationHeader) {

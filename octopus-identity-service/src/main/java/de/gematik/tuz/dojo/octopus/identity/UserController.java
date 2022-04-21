@@ -25,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class UserController {
 
-    @Value("${services.shopping}")
+    @Value("${services.shopping:}")
     private String shoppingServiceUrl;
     private static RsaJsonWebKey RSA_KEY;
 
