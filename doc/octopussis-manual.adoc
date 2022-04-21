@@ -95,3 +95,38 @@ Alternativ dazu kann man das nachfolgende Kommando auch aus dem Hauptverzeichnis
 Diese Methode hat die folgenden Vor- und Nachteile:
 - Es können nur begrenzt Szenarien und Features für die Ausführung ausgewählt werden
 - Nach einem Testdurchlauf wird *ein* vollständiger Serenity-Report erzeugt
+
+== Testobjekt
+Das Testobjekt *Octopussis* ist als Microservice-Architektur aufgebaut:
+
+image::img/octopussis_architecture.png[Microservices]
+
+=== OpernAPI
+Sämtliche Kommunikation mti dem Testobjekt wird über den `example-client` abgewickelt.
+Die API des `example-client` wird durch den Service direkt als OpenAPI (Swagger) bereitgestellt und kann unter http://localhost:5300/swagger-ui/index.html abgerufen werden.
+
+=== REST
+Für die Interaktion mit dem Testobjekt über die REST-Schnittstelle wird `SerenityRest` empfohlen, da sich dieses nahtlos in Serenity-BDD integriert und den Report mit nützlichen Informationen anreichert.
+Nachfolgend ein kurzes Beispiel zur Nutzung von `SerenityRest`.
+
+Zunächst der Tiger-Proxy initial (idealerweise in einem Hook) gesetzt werden:
+[soruce,java]
+----
+SerenityRest.proxy("localhost", 9191);
+----
+
+Anschließend können Requests mit `SerenityRest` nach folgendem Schema abgesetzt werden:
+[source,java]
+----
+val response = SerenityRest.get(
+                        "http://octopusClient/testdriver/performLogin?"
+                                + "username="
+                                + "Alice"
+                                + "&password="
+                                + "my_super_secret_password");
+----
+
+[NOTE]
+====
+Die URL http://octopusClient wird vom Tiger-Proxy aufgelöst und an den `example-client` durchgereicht.
+====
