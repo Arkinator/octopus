@@ -26,4 +26,8 @@ public class UserRepository {
 
     return newUser;
   }
+
+  public void deleteUser(String username) {
+    userMap.remove(username);
+  }
 }

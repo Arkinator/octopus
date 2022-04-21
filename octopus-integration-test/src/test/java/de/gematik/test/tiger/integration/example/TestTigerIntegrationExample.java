@@ -43,11 +43,12 @@ public class TestTigerIntegrationExample {
                 TigerProxyConfiguration.builder().build());
         }
         remoteProxyClient.removeModification(USER_INVALIDATION_MODIFICATION);
+
+        SerenityRest.proxy("localhost", 9191);
     }
 
     @When("I register new user with name {string} and password {string}")
     public void iRegisterNewUserWithNameAndPassword(final String username, final String password) {
-        SerenityRest.proxy("localhost", 9191);
         SerenityRest.get(
                 "http://octopusClient/testdriver/performRegistration?"
                     + "username="
@@ -59,7 +60,6 @@ public class TestTigerIntegrationExample {
 
     @When("I login as user {string} with password {string}")
     public void iLoginAsUserWithPassword(String username, String password) {
-        SerenityRest.proxy("localhost", 9191);
         SerenityRest.get(
                 "http://octopusClient/testdriver/performLogin?"
                     + "username="
@@ -71,7 +71,6 @@ public class TestTigerIntegrationExample {
 
     @Then("I want to see my inventory")
     public void iWantToSeeMyInventory() {
-        SerenityRest.proxy("localhost", 9191);
         SerenityRest.get("http://octopusClient/testdriver/retrieveInventory")
             .asString();
     }
@@ -90,11 +89,17 @@ public class TestTigerIntegrationExample {
 
     @And("I trade {string} to user {string} for {double}")
     public void iTradeToUserFor(String octopusName, String otherUserName, double money) {
-        SerenityRest.proxy("localhost", 9191);
         SerenityRest.get("http://octopusClient/testdriver/trade?"
                     + "octopusName=" + TigerGlobalConfiguration.resolvePlaceholders(octopusName)
                     + "&otherUserName=" + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(otherUserName), UTF_8)
                     + "&money=" + money)
+            .asString();
+    }
+
+    @And("I delete user with name {string}")
+    public void iDeleteUserWithName(String username) {
+        SerenityRest.get("http://octopusClient/testdriver/deleteUser?"
+                + "username=" + UriUtils.encodeQueryParam(TigerGlobalConfiguration.resolvePlaceholders(username), UTF_8))
             .asString();
     }
 }

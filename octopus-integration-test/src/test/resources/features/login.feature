@@ -41,3 +41,19 @@ Feature: Test Tiger BDD
         "path":"/login"
       }
     """
+
+  Scenario: Delete user - login should no longer work
+    Given TGR show blue banner "Deleting user and trying to log in..."
+    And I delete user with name "${octopus.testUser.name}"
+    When I login as user "${octopus.testUser.name}" with password "${octopus.testUser.password}"
+    Then TGR find next request to path "/login"
+    Then TGR current response with attribute "$.responseCode" matches "400"
+    Then TGR current response at "$.body" matches as "JSON"
+    """
+      {
+        "timestamp":"${json-unit.ignore}",
+        "status":400,
+        "error":"Bad Request",
+        "path":"/login"
+      }
+    """

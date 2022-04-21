@@ -54,6 +54,11 @@ public class UserController {
         return newUser;
     }
 
+    @PutMapping("deleteUser")
+    public void registerNewUser(@RequestParam("username") String username) {
+        userRepository.deleteUser(username);
+    }
+
     @PostMapping("login")
     public String login(
         @RequestParam("username") String username,

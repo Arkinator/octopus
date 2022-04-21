@@ -2,20 +2,21 @@ package de.gematik.tuz.dojo.octopus.client;
 
 import com.google.common.hash.Hashing;
 import de.gematik.tuz.dojo.octopus.client.dto.NewUserDto;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("testdriver")
@@ -47,6 +48,16 @@ public class TestDriverController {
         log.info("got result {}", newUserResult.toString());
 
         return NewUserDto.builder().id(newUserResult.getLong("id")).name(username).build();
+    }
+
+    @GetMapping("deleteUser")
+    public void deleteUser(@RequestParam("username") String username) {
+        final HttpResponse response = Unirest.put(identityServiceUrl + "/deleteUser")
+            .queryString("username", username)
+            .asEmpty();
+        if (!response.isSuccess()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failure while deleting user");
+        }
     }
 
     @GetMapping("performLogin")
