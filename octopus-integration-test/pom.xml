@@ -16,7 +16,7 @@
     <artifactId>octopus-integration-test</artifactId>
 
     <properties>
-        <tiger.version>0.19.5-SNAPSHOT</tiger.version>
+        <tiger.version>0.20.0</tiger.version>
         <selenium.version>4.1.2</selenium.version>
     </properties>
 
