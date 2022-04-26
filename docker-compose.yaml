@@ -4,21 +4,21 @@ services:
   identity-service:
     image: octopus/octopus-identity-service:1.0-SNAPSHOT
     environment:
-      - SHOPPING_SERVICE_URL=http://shopping-service
+      - SHOPPING_SERVICE_URL=http://shopping-service:8080
     ports:
       - "5100:8080"
 
   shopping-service:
     image: octopus/octopus-shopping-service:1.0-SNAPSHOT
     environment:
-      - IDENTITY_SERVICE_URL=http://identity-service
+      - IDENTITY_SERVICE_URL=http://identity-service:8080
     ports:
       - "5200:8080"
 
   example-client:
     image: octopus/octopus-example-client:1.0-SNAPSHOT
     environment:
-      - IDENTITY_SERVICE_URL=http://identity-service
-      - SHOPPING_SERVICE_URL=http://shopping-service
+      - IDENTITY_SERVICE_URL=http://identity-service:8080
+      - SHOPPING_SERVICE_URL=http://shopping-service:8080
     ports:
       - "5300:8080"

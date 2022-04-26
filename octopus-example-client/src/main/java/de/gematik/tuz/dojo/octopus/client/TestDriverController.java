@@ -23,9 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class TestDriverController {
 
-    @Value("${services.identity:}")
+    @Value("${services.identity}")
     private String identityServiceUrl;
-    @Value("${services.shopping:}")
+    @Value("${services.shopping}")
     private String shoppingServiceUrl;
     private AtomicReference<String> userToken = new AtomicReference<>();
 
@@ -61,8 +61,9 @@ public class TestDriverController {
     }
 
     @GetMapping("performLogin")
-    public String performLogin(
-        @RequestParam("username") String username, @RequestParam("password") String password) {
+    public String performLogin(@RequestParam("username") String username, @RequestParam("password") String password) {
+        log.info("Performing login with username '{}' and password '{}' at url '{}'",
+            username, password, identityServiceUrl);
         return Unirest.post(identityServiceUrl + "/login")
             .queryString("passwordHash", Hashing.sha256().hashString(password).toString())
             .queryString("username", username)
