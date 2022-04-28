@@ -1,5 +1,6 @@
 package de.gematik.test.tiger.integration.example;
 
+import de.gematik.test.tiger.common.config.TigerGlobalConfiguration;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -18,27 +19,29 @@ public class TestdriverActions {
     @When("I try to log in as {string} with password {string}")
     public void iTryToLogInAsWithPassword(String username, String password) {
         SerenityRest.given()
-            .queryParam("username", encodeQueryParam(username))
-            .queryParam("password", encodeQueryParam(password))
+            .queryParam("username", resolveAndEncodeQueryParam(username))
+            .queryParam("password", resolveAndEncodeQueryParam(password))
             .get("http://testdriver/testdriver/performLogin");
     }
 
     @Given("User {string} is not registered")
     public void userIsNotRegistered(String username) {
         SerenityRest.given()
-            .queryParam("username", encodeQueryParam(username))
+            .queryParam("username", resolveAndEncodeQueryParam(username))
             .get("http://testdriver/testdriver/deleteUser");
     }
 
     @Then("I register as user {string} with password {string}")
     public void iRegisterAsUserWithPassword(String username, String password) {
         SerenityRest.given()
-            .queryParam("username", encodeQueryParam(username))
-            .queryParam("password", encodeQueryParam(password))
+            .queryParam("username", resolveAndEncodeQueryParam(username))
+            .queryParam("password", resolveAndEncodeQueryParam(password))
             .get("http://testdriver/testdriver/performRegistration");
     }
 
-    private static String encodeQueryParam(String parameter) {
-        return UriUtils.encodeQueryParam(parameter, StandardCharsets.UTF_8);
+    private static String resolveAndEncodeQueryParam(String parameter) {
+        return UriUtils.encodeQueryParam(
+            TigerGlobalConfiguration.resolvePlaceholders(parameter),
+            StandardCharsets.UTF_8);
     }
 }

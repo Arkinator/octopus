@@ -5,3 +5,8 @@ servers:
       - http://localhost:5300
     healthcheckUrl: http://localhost:5300/testdriver/status
     startupTimeoutSec: 2
+
+additionalYamls:
+  -
+    filename: octopusData.yaml
+    baseKey: octopus
