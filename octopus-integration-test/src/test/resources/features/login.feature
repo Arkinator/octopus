@@ -3,7 +3,7 @@ Feature: Login
   Scenario: Login as unregistered user, then register and finally login again
     Given User "${octopus.user.name}" is not registered
     When I try to log in as "${octopus.user.name}" with password "${octopus.user.password}"
-    And TGR find request to path "/testdriver/performLogin"
+    And TGR find last request to path "/testdriver/performLogin"
     And TGR current response at "$.body" matches as JSON
       """
         {

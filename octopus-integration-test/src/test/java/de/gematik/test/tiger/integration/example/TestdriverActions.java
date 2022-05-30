@@ -1,6 +1,7 @@
 package de.gematik.test.tiger.integration.example;
 
 import de.gematik.test.tiger.common.config.TigerGlobalConfiguration;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -37,6 +38,12 @@ public class TestdriverActions {
             .queryParam("username", resolveAndEncodeQueryParam(username))
             .queryParam("password", resolveAndEncodeQueryParam(password))
             .get("http://testdriver/testdriver/performRegistration");
+    }
+
+    @And("I try to view my inventory")
+    public void iTryToViewMyInventory() {
+        SerenityRest.given()
+            .get("http://testdriver/testdriver/retrieveInventory");
     }
 
     private static String resolveAndEncodeQueryParam(String parameter) {
