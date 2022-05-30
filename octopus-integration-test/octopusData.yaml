@@ -1,3 +1,6 @@
 user:
   name: myVeryCoolUserName
   password: "Secret password with §$%&/()=)(/&%&/( special characters"
+idService:
+  certificate:
+    dn: CN=MO0tTlrLGqMnUIg0HhC3k68DLDsespz0M-mBlXP-3-k
