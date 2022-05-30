@@ -1,6 +1,8 @@
 package de.gematik.test.tiger.integration.example;
 
+import de.gematik.rbellogger.modifier.RbelModificationDescription;
 import de.gematik.test.tiger.common.config.TigerGlobalConfiguration;
+import de.gematik.test.tiger.proxy.client.TigerRemoteProxyClient;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -50,5 +52,19 @@ public class TestdriverActions {
         return UriUtils.encodeQueryParam(
             TigerGlobalConfiguration.resolvePlaceholders(parameter),
             StandardCharsets.UTF_8);
+    }
+
+    @And("invalidate token on inventory-request")
+    public void invalidateNextPassword() {
+        try (final TigerRemoteProxyClient remoteProxyClient
+            = new TigerRemoteProxyClient(TigerGlobalConfiguration.resolvePlaceholders(
+                "http://localhost:${tiger.ports.adminPort}"))) {
+
+            remoteProxyClient.addModificaton(RbelModificationDescription.builder()
+                .condition("request.url =~ '/inventory.*' && isRequest")
+                .targetElement("$.header.Authorization")
+                .replaceWith("Bearer eyJhbGthis.tokenis.wrong")
+                .build());
+        }
     }
 }

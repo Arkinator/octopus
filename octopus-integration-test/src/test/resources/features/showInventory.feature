@@ -9,3 +9,10 @@ Feature: Show Inventory
     And TGR current response at "$.responseCode" matches "200"
     And TGR current response at "$.body.0.gender" matches "(MALE|FEMALE)"
     And TGR current response at "$.body.1.gender" matches "(MALE|FEMALE)"
+
+  Scenario: Invalidate Token: Show inventory should be declined
+    Given invalidate token on inventory-request
+    When I try to view my inventory
+    Then TGR find last request to path "/testdriver/retrieveInventory"
+    And TGR current response at "$.body.status" matches "403"
+    And TGR current response at "$.body.error" matches "Forbidden"
