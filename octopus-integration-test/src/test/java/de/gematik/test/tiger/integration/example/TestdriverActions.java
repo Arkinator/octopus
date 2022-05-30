@@ -10,6 +10,6 @@ public class TestdriverActions {
         SerenityRest.given()
             .queryParam("username", "foo")
             .queryParam("password", "secret")
-            .get("http://localhost:5300/testdriver/performLogin");
+            .get("http://testdriver/testdriver/performLogin");
     }
 }
