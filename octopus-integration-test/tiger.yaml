@@ -2,6 +2,13 @@ ports:
   identity: ${free.port.0}
   client: ${free.port.1}
   shopping: ${free.port.2}
+  adminPort: ${free.port.3}
+  proxyPort: ${free.port.4}
+
+tigerProxy:
+  skipTrafficEndpointsSubscription: true
+  trafficEndpoints:
+    - http://localhost:${tiger.ports.adminPort}
 
 servers:
   identityServer:
@@ -10,9 +17,12 @@ servers:
       - local:../octopus-identity-service/target/octopus-identity-service-1.0-SNAPSHOT.jar
     healthcheckUrl: http://localhost:${tiger.ports.identity}/status
     externalJarOptions:
+      options:
+        - -Dhttp.proxyHost=127.0.0.1
+        - -Dhttp.proxyPort=${tiger.ports.proxyPort}
       arguments:
         - --server.port=${tiger.ports.identity}
-        - --services.shopping=http://localhost:${tiger.ports.shopping}
+        - --services.shopping=http://shoppingServer
 
   shoppingServer:
     type: externalJar
@@ -20,9 +30,12 @@ servers:
       - local:../octopus-shopping-service/target/octopus-shopping-service-1.0-SNAPSHOT.jar
     healthcheckUrl: http://localhost:${tiger.ports.shopping}/inventory/status
     externalJarOptions:
+      options:
+        - -Dhttp.proxyHost=127.0.0.1
+        - -Dhttp.proxyPort=${tiger.ports.proxyPort}
       arguments:
         - --server.port=${tiger.ports.shopping}
-        - --services.identity=http://localhost:${tiger.ports.identity}
+        - --services.identity=http://identityServer
 
   testdriver:
     type: externalJar
@@ -30,10 +43,26 @@ servers:
       - local:../octopus-example-client/target/octopus-example-client-1.0-SNAPSHOT.jar
     healthcheckUrl: http://localhost:${tiger.ports.client}/testdriver/status
     externalJarOptions:
+      options:
+        - -Dhttp.proxyHost=127.0.0.1
+        - -Dhttp.proxyPort=${tiger.ports.proxyPort}
       arguments:
         - --server.port=${tiger.ports.client}
-        - --services.shopping=http://localhost:${tiger.ports.shopping}
-        - --services.identity=http://localhost:${tiger.ports.identity}
+        - --services.shopping=http://shoppingServer
+        - --services.identity=http://identityServer
+
+  remoteTigerProxy:
+    type: tigerProxy
+    tigerProxyCfg:
+      adminPort: ${tiger.ports.adminPort}
+      proxyPort: ${tiger.ports.proxyPort}
+      proxyRoutes:
+        - from: http://identityServer
+          to: http://localhost:${tiger.ports.identity}
+        - from: http://shoppingServer
+          to: http://localhost:${tiger.ports.shopping}
+        - from: http://testClient
+          to: http://localhost:${tiger.ports.client}
 
 additionalYamls:
   -

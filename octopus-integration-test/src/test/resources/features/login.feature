@@ -28,7 +28,6 @@ Feature: Login
     Then I try to log in as "${octopus.user.name}" with password "${octopus.user.password}"
     And TGR find last request to path "/testdriver/performLogin"
     And TGR current response at "$.responseCode" matches "200"
-    And TGR print current response as rbel-tree
 
     And TGR current response at "$.body.body" matches as JSON
       """
@@ -42,3 +41,7 @@ Feature: Login
     And TGR current response at "$..name" matches "${octopus.user.name}"
     And TGR current response at "$.body.header.x5c.0.content.issuer" matches "${octopus.idService.certificate.dn}"
     And TGR current response at "$.body.header.x5c.0.content.subject" matches "${octopus.idService.certificate.dn}"
+
+    And TGR find last request to path "/inventory/generate"
+    And TGR current response at "$.body.0.gender" matches "(MALE|FEMALE)"
+    And TGR current response at "$.body.1.gender" matches "(MALE|FEMALE)"
