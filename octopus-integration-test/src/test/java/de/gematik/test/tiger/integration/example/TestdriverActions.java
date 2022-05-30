@@ -12,4 +12,10 @@ public class TestdriverActions {
             .queryParam("password", "secret")
             .get("http://testdriver/testdriver/performLogin");
     }
+
+    @Given("I control the healthendpoint")
+    public void iControlTheHealthEndpoint() {
+        SerenityRest.given()
+            .get("http://testdriver/testdriver/status");
+    }
 }
