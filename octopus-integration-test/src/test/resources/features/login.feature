@@ -1,17 +1,16 @@
 Feature: Login
 
-  Scenario: Trigger login as a new user
-    Given I control the healthendpoint
-    When I try to log in
-    And TGR find request to path "/testdriver/.*"
-    And TGR current response at "$.responseCode" matches "200"
-    And TGR current response at "$.body" matches "OK"
-    And TGR current response at "$.sender.domain" matches "testdriver"
-    And TGR find next request to path "/testdriver/.*"
-    Then TGR print current response as rbel-tree
+  Scenario: Login as unregistered user, then register and finally login again
+    Given User "user1" is not registered
+    When I try to log in as "user1" with password "secret1"
+    And TGR find request to path "/testdriver/performLogin"
     And TGR current response at "$.body.status" matches "400"
-    And TGR current response at "$.body.error" matches "Bad Request"
-    And TGR current response at "$.body.path" matches "/login"
-    And TGR current response at "$.header.Connection" matches "keep-alive"
+
+    Then I register as user "user1" with password "secret1"
+    And TGR find last request to path "/testdriver/performRegistration"
     And TGR current response at "$.responseCode" matches "200"
-    And TGR current response at "$.sender.domain" matches "testdriver"
+    And TGR current response at "$.body.name" matches "user1"
+
+    Then I try to log in as "user1" with password "secret1"
+    And TGR find last request to path "/testdriver/performLogin"
+    And TGR current response at "$.responseCode" matches "200"

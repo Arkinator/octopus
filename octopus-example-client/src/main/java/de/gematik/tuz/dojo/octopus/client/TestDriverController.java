@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 import de.gematik.tuz.dojo.octopus.client.dto.NewUserDto;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.PostConstruct;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -28,6 +29,12 @@ public class TestDriverController {
     @Value("${services.shopping}")
     private String shoppingServiceUrl;
     private AtomicReference<String> userToken = new AtomicReference<>();
+
+    @PostConstruct
+    public void logServers() {
+        log.info("id-service url: {}", identityServiceUrl);
+        log.info("shopping-service url: {}", shoppingServiceUrl);
+    }
 
     @GetMapping("performRegistration")
     public NewUserDto performRegistration(
