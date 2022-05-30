@@ -1,10 +1,39 @@
+ports:
+  identity: ${free.port.0}
+  client: ${free.port.1}
+  shopping: ${free.port.2}
+
 servers:
-  testdriver:
-    type: externalUrl
+  identityServer:
+    type: externalJar
     source:
-      - http://localhost:5300
-    healthcheckUrl: http://localhost:5300/testdriver/status
-    startupTimeoutSec: 2
+      - local:../octopus-identity-service/target/octopus-identity-service-1.0-SNAPSHOT.jar
+    healthcheckUrl: http://localhost:${tiger.ports.identity}/status
+    externalJarOptions:
+      arguments:
+        - --server.port=${tiger.ports.identity}
+        - --services.shopping=http://localhost:${tiger.ports.shopping}
+
+  shoppingServer:
+    type: externalJar
+    source:
+      - local:../octopus-shopping-service/target/octopus-shopping-service-1.0-SNAPSHOT.jar
+    healthcheckUrl: http://localhost:${tiger.ports.shopping}/inventory/status
+    externalJarOptions:
+      arguments:
+        - --server.port=${tiger.ports.shopping}
+        - --services.identity=http://localhost:${tiger.ports.identity}
+
+  testdriver:
+    type: externalJar
+    source:
+      - local:../octopus-example-client/target/octopus-example-client-1.0-SNAPSHOT.jar
+    healthcheckUrl: http://localhost:${tiger.ports.client}/testdriver/status
+    externalJarOptions:
+      arguments:
+        - --server.port=${tiger.ports.client}
+        - --services.shopping=http://localhost:${tiger.ports.shopping}
+        - --services.identity=http://localhost:${tiger.ports.identity}
 
 additionalYamls:
   -
