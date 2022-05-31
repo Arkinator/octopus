@@ -1,0 +1,24 @@
+servers:
+  identityServer:
+    type: externalUrl
+    startupTimeoutSec: 2
+    source:
+      - http://localhost:5100
+    externalJarOptions:
+      healthcheck: http://localhost:5300/status
+
+  shoppingServer:
+    type: externalUrl
+    startupTimeoutSec: 2
+    source:
+      - http://localhost:5200
+    externalJarOptions:
+      healthcheck: http://localhost:5200/inventory/status
+
+  testClient:
+    type: externalUrl
+    startupTimeoutSec: 2
+    source:
+      - http://localhost:5300
+    externalJarOptions:
+      healthcheck: http://localhost:5300/testdriver/status
