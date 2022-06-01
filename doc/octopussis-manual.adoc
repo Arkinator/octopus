@@ -1,4 +1,4 @@
-= Octopussis
+= Oktopus
 :sectnums:
 :toc:
 :toc-title: Inhalt
@@ -29,14 +29,14 @@ Das Projekt liegt aktuell in der GitLab-Gruppe `tuz-quality-dojos` und ist damit
 ====
 
 === Bauen
-Das Projekt kann mit dem folgenden Kommando gebaut werden. Dieser Schritt ist nur notwendig, wenn im nächsten Schritt Octopussis <<_manuell_starten, manuell>> gestartet werden soll.
+Das Projekt kann mit dem folgenden Kommando gebaut werden. Dieser Schritt ist nur notwendig, wenn im nächsten Schritt Oktopus <<_manuell_starten, manuell>> gestartet werden soll.
 
 [source,console]
 ----
 mvn clean package
 ----
 
-=== Octopussis starten
+=== Oktopus starten
 
 Um die Anwendung zu starten gibt es verschiedene Möglichkeiten. Die gesamte Anwendung liegt als `docker-compose.yaml` vor und kann entweder manuell oder
 automatisiert über Maven hochgefahren werden.
@@ -97,12 +97,12 @@ Diese Methode hat die folgenden Vor- und Nachteile:
 - Nach einem Testdurchlauf wird *ein* vollständiger Serenity-Report erzeugt
 
 == Testobjekt
-Das Testobjekt *Octopussis* ist als Microservice-Architektur aufgebaut:
+Das Testobjekt *Oktopus* ist als Microservice-Architektur aufgebaut:
 
 image::img/octopussis_architecture.png[Microservices]
 
-=== OpernAPI
-Sämtliche Kommunikation mti dem Testobjekt wird über den `example-client` abgewickelt.
+=== OpenAPI
+Sämtliche Kommunikation mit dem Testobjekt wird über den `example-client` abgewickelt.
 Die API des `example-client` wird durch den Service direkt als OpenAPI (Swagger) bereitgestellt und kann unter http://localhost:5300/swagger-ui/index.html abgerufen werden.
 
 === REST

@@ -20,6 +20,7 @@
         <module>octopus-identity-service</module>
         <module>octopus-shopping-service</module>
         <module>octopus-example-client</module>
+        <module>octopus-integration-test</module>
     </modules>
 
     <properties>
